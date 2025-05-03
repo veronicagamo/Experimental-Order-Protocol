@@ -1,47 +1,32 @@
-#ProtChemExperimentalOrder – Add Experimental Binding Energy to Molecule Set
+# ProtChemExperimentalOrder – Add Experimental Binding Energy to Molecule Set
 
-##Overview:
+## Overview
+This protocol allows users to annotate a set of small molecules in Scipion-chem with corresponding **experimental binding energy values** using a provided CSV file. It is particularly useful for benchmarking virtual screening workflows or validating computational predictions.
 
-This protocol allows users to annotate a set of small molecules in Scipion-chem with corresponding experimental binding energy values (e.g., ΔG) using a provided CSV file. This is particularly useful for benchmarking virtual screening workflows or comparing computational predictions with known experimental results.
+## Purpose
+The protocol enriches molecular datasets with experimental affinity data to:
+- Compare predicted scores with experimental results.
+- Evaluate workflow accuracy and consistency.
+- Visualize or rank compounds based on real-world performance.
 
-##Purpose:
+## Input Parameters
+- **Experimental Data CSV File**: Path to a CSV file containing:
+  - `molName`: Molecule name (must match `mol.getMolName()` in Scipion).
+  - `experimental_energy`: Experimental binding energy (e.g., in kcal/mol).
+- **Experimental Data CSV Delimiter**: Delimiter used in the CSV (e.g., `,` or `\t`).
+- **Molecule Set**: A `SetOfSmallMolecules` object to be annotated.
 
-The goal is to enrich molecular datasets with experimental affinity data to:
+## How It Works
+1. Loads and parses the experimental data CSV.
+2. Matches entries by molecule name.
+3. Annotates matching molecules with a new attribute: `experimental_energy`.
+4. Returns a new molecule set containing the updated entries.
 
-    Enable downstream analysis of prediction accuracy.
+## Output
+- A new `SetOfSmallMolecules` with each matching molecule annotated with an `experimental_energy` attribute.
 
-    Facilitate correlation between docking/rescoring outputs and real-world bioactivity.
+## Notes
+- Molecule names must match exactly between the CSV and the molecule set.
+- Only molecules found in both sources will be updated.
+- This protocol adds metadata for analysis but does not modify docking or scoring outputs.
 
-    Support visualization or ranking workflows that integrate experimental benchmarks.
-
-Input Parameters:
-
-    Experimental Data CSV File: A path to the CSV file containing the reference values. The file must contain at least two columns:
-
-        molName: The name of the molecule (must match mol.getMolName() in Scipion).
-
-        experimental_energy: The experimental binding energy value (e.g., in kcal/mol).
-
-    Experimental Data CSV Delimiter: Specifies the delimiter used in the CSV file (e.g., , for comma or \t for tab-separated files).
-
-    Molecule Set: A SetOfSmallMolecules object containing the molecules to be annotated with experimental values.
-
-How It Works:
-
-    Reads the experimental CSV file and creates a mapping of molecule names to energy values.
-
-    Iterates over the molecules in the input set and adds an experimental_energy attribute to those found in the CSV.
-
-    Returns a new molecule set with the experimental values embedded for use in scoring, filtering, or plotting workflows.
-
-Output:
-
-    A new SetOfSmallMolecules with the experimental_energy attribute added to the corresponding molecules.
-
-Notes:
-
-    Molecule names in the CSV must exactly match the names in the input set.
-
-    Only molecules present in both the input set and the CSV will be updated.
-
-    This protocol does not modify docking or scoring results—only enriches the metadata for further correlation or benchmarking.
